@@ -98,7 +98,9 @@ void loop() {
           digitalWrite(motorPin3, HIGH);
           digitalWrite(motorPin4, LOW);
           delay(6000);
-          break;  
+          break; 
+          
+        case 'O': //object detection
          
          
         default:
