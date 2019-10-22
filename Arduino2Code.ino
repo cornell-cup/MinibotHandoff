@@ -1,9 +1,13 @@
 #include <SPI.h>
 #include <Servo.h>
+#include <SPI.h>
+#include <Adafruit_PN532.h>
 
 
 Servo myservo;
 
+#define PN532_IRQ   (9)   //set up the interrupt and reset
+#define PN532_RESET (17)  
 int val;
 char buff [50];
 volatile byte indx;
@@ -13,6 +17,13 @@ int motorPin1 = 2;
 int motorPin2 = 3;
 int motorPin3 = 8;
 int motorPin4 = 5;
+//LEDs for RFID
+int LED1 = 14;    //Green LED
+int LED2 = 6;    //Yellow LED
+int LED3 = 4;    //Red LED
+//initialize the RFID
+Adafruit_PN532 nfc(PN532_IRQ, PN532_RESET);
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -26,9 +37,15 @@ void setup() {
   pinMode(motorPin4, OUTPUT);
   pinMode(20,OUTPUT);
   pinMode(22,OUTPUT);
+  //LEDs setup
+  pinMode(LED1,OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
   SPCR |= bit (SPE); // slave control register
   indx = 0; //buffer empty
   process = false;
+  
+  nfc.begin();
   
   pinMode(interruptPin,INPUT);
   int val = digitalRead(interruptPin);
