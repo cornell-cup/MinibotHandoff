@@ -9,9 +9,9 @@
 //use J11 on the PCB
 #define PN532_IRQ   (9)
 #define PN532_RESET (17)  // Not connected by default on the NFC Shield
-int LED1 = 2;    //Green LED
-int LED2 = 3;    //Yellow LED
-int LED3 = 7;    //Red LED
+int LED1 = 14;    //Green LED
+int LED2 = 6;    //Yellow LED
+int LED3 = 4;    //Red LED
 
 
 // Or use this line for a breakout or shield with an I2C connection:
@@ -80,9 +80,9 @@ void loop() {
   boolean detector;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID from tag
   
-  uint8_t obj1[] = {0x56, 0x54, 0x4A, 0x42};
-  uint8_t obj2[] = {0x26, 0x54, 0x4A, 0x42};
-  uint8_t obj3[] = {0x1D, 0xEC, 0xB7, 0xC3};  //for the 
+  uint8_t obj1[] = {0xE9, 0xDF, 0xE, 0xF4}; //the tag on the LED panel
+  uint8_t obj2[] = {0x79, 0x5C, 0xE, 0xF4}; //the tag on the micrstickII
+  uint8_t obj3[] = {0x1D, 0xEC, 0xB7, 0xC3};  //for the blue key tags
   uint8_t uidLength;
 
 Serial.println("Sensor ready!");
@@ -171,7 +171,6 @@ Serial.println("Sensor ready!");
     digitalWrite(LED, HIGH);
     delay(1000);
     digitalWrite(LED,LOW);
-    delay(200);
+    delay(1000);
     }
   }
-
