@@ -29,6 +29,8 @@ def fwd():
   #print b
   print cmd
   transmit(cmd)
+  #cmd = ord(param) -- do some math on the param to separate different speeds. 
+  #Maybe >100 one speed <100 another set speed
   
 def back():
   setSlave(0)
@@ -50,7 +52,14 @@ def right():
   #print b
   print cmd
   transmit(cmd)     
-    
+
+def stop()
+  setSlave(0)
+  cmd = ord('S')
+  #print b
+  print cmd
+  transmit(cmd)       
+
 def LineFollow():
   setSlave(0)
   cmd = ord('T') #for tape follow
