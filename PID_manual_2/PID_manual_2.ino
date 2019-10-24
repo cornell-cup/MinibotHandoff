@@ -14,8 +14,7 @@ int encoder1Pos = 0;
 int encoder1PinALast = LOW;
 
 int encoderCountpRev = 360;
-int setpoint0 = 200; //(degrees/sec)
-int setpoint1 = 200; //(degrees/sec)
+int setpoint = 200; //(degrees/sec) 
 double Integral0 = 0;
 double Integral1 = 0;
 int n = LOW;
@@ -107,12 +106,12 @@ void loop() {
 
 void adjustPWM() {
   int speedNow0 = calculateSpeed0();
-  int error0 = setpoint0 - speedNow0;
+  int error0 = setpoint - speedNow0;
   double dError0 = ((double)speedNow0 - (double)lastSpeed0) / timeSec;
   Integral0 += (double) error0;
 
   int speedNow1 = calculateSpeed1();
-  int error1 = setpoint1 - speedNow1;
+  int error1 = setpoint - speedNow1;
   double dError1 = ((double)speedNow1 - (double)lastSpeed1) / timeSec;
   Integral1 += (double) error1;
 
