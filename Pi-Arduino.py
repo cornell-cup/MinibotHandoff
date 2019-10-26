@@ -54,7 +54,7 @@ def right():
   print cmd
   transmit(cmd)     
 
-def stop()
+def stop():
   setSlave(1)
   cmd = ord('S')
   #print b
