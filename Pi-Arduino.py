@@ -4,6 +4,7 @@ import time
 
 spi = spidev.SpiDev()
 
+#set which arduino to talk to. slave(0) for arduino 1 and slave(1) for arduino 2
 def setSlave(PiBus):
   device = 0
   bus = PiBus
@@ -24,7 +25,7 @@ def transmit(message):
 
 
 def fwd():
-  setSlave(0)
+  setSlave(1)
   cmd = ord('F')
   #print b
   print cmd
@@ -33,42 +34,42 @@ def fwd():
   #Maybe >100 one speed <100 another set speed
   
 def back():
-  setSlave(0)
+  setSlave(1)
   cmd = ord('B')
   #print b
   print cmd
   transmit(cmd)          
 
 def left():
-  setSlave(0)
+  setSlave(1)
   cmd = ord('L')
   #print b
   print cmd
   transmit(cmd) 
           
 def right():
-  setSlave(0)
+  setSlave(1)
   cmd = ord('R')
   #print b
   print cmd
   transmit(cmd)     
 
 def stop()
-  setSlave(0)
+  setSlave(1)
   cmd = ord('S')
   #print b
   print cmd
   transmit(cmd)       
 
 def LineFollow():
-  setSlave(0)
+  setSlave(1)
   cmd = ord('T') #for tape follow
   #print b
   print cmd
   transmit(cmd)
 
 def ObjectDetection():
-  setSlave(1)
+  setSlave(0)
   cmd = ord('O') 
   #print b
   print cmd
