@@ -80,9 +80,9 @@ void loop() {
   boolean detector;
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID from tag
   
-  uint8_t obj1[] = {0xE9, 0xDF, 0xE, 0xF4}; //the tag on the LED panel
-  uint8_t obj2[] = {0x79, 0x5C, 0xE, 0xF4}; //the tag on the micrstickII
-  uint8_t obj3[] = {0x1D, 0xEC, 0xB7, 0xC3};  //for the blue key tags
+  uint8_t obj1[] = {0xB9, 0xC3, 0xD, 0xF4}; //Green Tower
+  uint8_t obj2[] = {0xB9, 0x12, 0xD, 0xF4}; //Yellow Tower
+  uint8_t obj3[] = {0xC9, 0x82, 0xC, 0xF4};  //Red Tower
   uint8_t uidLength;
 
 Serial.println("Sensor ready!");
