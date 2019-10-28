@@ -18,8 +18,6 @@ def transmit(message):
       print (message)
       tx = spi.writebytes([message])
       time.sleep(10)
-      rx = spi.readbytes(2)
-      print('Read: 0x(0)'.format(binascii.hexlify(bytearray(rx))))
   finally:
     spi.close()
 
