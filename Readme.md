@@ -13,8 +13,9 @@ Object Detection mode:  O
 
 HOW TO RUN: You type into terminal
 
-cd MinibotHandoff
-python -c 'import MinibotHandoff; MinibotHandoff.ObjectDetection()'
+cd MinibotHandoff 
+
+python -c 'import PiArduino; PiArduino.ObjectDetection()'
 NOTE: change .ObjectDetection() function to whatever function you want to run (ex. fwd(), left(),right(),stop(),back(),LineFollow() 
 
 Arduino1.ino refers to top arduino (Closest to the raspberry pi) Arduino2.ino referes to bottom arduino (closest to battery)
