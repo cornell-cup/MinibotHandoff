@@ -78,8 +78,8 @@ void readSensors(){
 void drive_forward() {
   digitalWrite(Rmotor,HIGH); 
   digitalWrite(Lmotor,HIGH);
-  analogWrite(RmotorPWM,50);
-  analogWrite(LmotorPWM, 50);
+  analogWrite(RmotorPWM,75);
+  analogWrite(LmotorPWM, 75);
 }
 void stop(){
   digitalWrite(Rmotor,LOW);
@@ -98,5 +98,5 @@ void veer_right(){
   digitalWrite(Rmotor,HIGH);
   digitalWrite(Lmotor,HIGH);
   analogWrite(RmotorPWM,20);
-  analogWrite(LmotorPWM, 8|0);
+  analogWrite(LmotorPWM, 80);
 }
