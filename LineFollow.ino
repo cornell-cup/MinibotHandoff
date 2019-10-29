@@ -5,8 +5,8 @@ int RmotorPWM= 3;
 int Lmotor= 8;
 int LmotorPWM= 5;
 
-int left_Q = A3;
-int right_Q = A5;
+int left_Q = A6;
+int right_Q = A3;
 
 int left_calib;
 int right_calib;
@@ -19,7 +19,8 @@ int left_read;
 int right_read;
 
 //CONSTANT TO GET THE REFLECTANCE OF A LINE
-int line_refl=980;
+int left_line_refl=814;
+int right_line_refl=763;
 
 int left_line=false;
 int right_line=false;
@@ -34,18 +35,24 @@ void setup() {
   pinMode(RmotorPWM,OUTPUT);
   pinMode(LmotorPWM, OUTPUT);
   
-  pinMode(left_Q, INPUT);
-  pinMode(right_Q, INPUT);
+  //pinMode(left_Q, INPUT);
+//  pinMode(right_Q, INPUT);
 
   left_calib=analogRead(left_Q);
   right_calib=analogRead(right_Q);
 
-  left_threshold = abs((left_calib-line_refl)/2);
-  right_threshold = abs((right_calib-line_refl)/2);
+  left_threshold = abs((left_calib-left_line_refl)/2);
+  right_threshold = abs((right_calib-right_line_refl)/2);
 }
 
 void loop() {
     readSensors();
+    Serial.print("LEFT SENSOR: ");
+    Serial.println(analogRead(left_Q));
+    Serial.print("RIGHT SENSOR: ");
+    Serial.println(analogRead(right_Q));
+    delay(500);
+    
     if(!left_line && !right_line){
       drive_forward();
       Serial.println("forward no line");
@@ -65,14 +72,14 @@ void loop() {
 }
 
 void readSensors(){
-  left_line= (((analogRead(left_Q)-line_refl)<left_threshold) ||(line_refl-analogRead(left_Q))>left_threshold);
-  right_line=((analogRead(right_Q)-line_refl<right_threshold) || (line_refl-analogRead(right_Q))>right_threshold);
+  left_line= (((analogRead(left_Q)-left_line_refl)<left_threshold) ||(left_line_refl-analogRead(left_Q))>left_threshold);
+  right_line=((analogRead(right_Q)-right_line_refl<right_threshold) || (left_line_refl-analogRead(right_Q))>right_threshold);
 }
 void drive_forward() {
   digitalWrite(Rmotor,HIGH); 
   digitalWrite(Lmotor,HIGH);
-  analogWrite(RmotorPWM,100);
-  analogWrite(LmotorPWM, 100);
+  analogWrite(RmotorPWM,50);
+  analogWrite(LmotorPWM, 50);
 }
 void stop(){
   digitalWrite(Rmotor,LOW);
@@ -83,13 +90,13 @@ void stop(){
 void veer_left(){
   digitalWrite(Rmotor,HIGH);
   digitalWrite(Lmotor,HIGH);
-  analogWrite(RmotorPWM,150);
-  analogWrite(LmotorPWM, 50);
+  analogWrite(RmotorPWM,80);
+  analogWrite(LmotorPWM, 20);
 }
 
 void veer_right(){
   digitalWrite(Rmotor,HIGH);
   digitalWrite(Lmotor,HIGH);
-  analogWrite(RmotorPWM,50);
-  analogWrite(LmotorPWM, 150);
+  analogWrite(RmotorPWM,20);
+  analogWrite(LmotorPWM, 8|0);
 }
