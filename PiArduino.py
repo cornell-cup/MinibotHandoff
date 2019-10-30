@@ -17,8 +17,9 @@ def transmit(message):
     while True:
       print (message)
       tx = spi.writebytes([message])
-      time.sleep(10)
+      time.sleep(0.3)
   finally:
+    tx = spi.writebytes([ord('S')])
     spi.close()
 
 
