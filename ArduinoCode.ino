@@ -265,8 +265,22 @@ void moveForward() {
     digitalWrite(motor0pin1, HIGH);
     digitalWrite(motor1pin2, LOW);
     digitalWrite(motor1pin1, HIGH);
+    //delay(400);
     Serial.println("move");
   }
+  //check again
+   if (in == 1 || cm < 10){
+    //stop
+    digitalWrite(motor0pin2, HIGH);//1 high 2 low is clockwise
+    digitalWrite(motor0pin1, LOW);
+    digitalWrite(motor1pin2, HIGH);
+    digitalWrite(motor1pin1, LOW);
+    delay(400);
+    digitalWrite(motor0pin2, LOW);
+    digitalWrite(motor1pin2, LOW);
+    delay(1000);
+    Serial.println("stop");
+  } 
 }
 
 void LineFollow() {
@@ -274,9 +288,9 @@ void LineFollow() {
 }
 
 void loop() {
+  
   Serial.print(buff);
   Serial.println(" test");
- // moveForward();
 
 
   if (process) {
@@ -290,7 +304,6 @@ void loop() {
       switch(buff[i]) {
         case 'F' : //fwd
           Serial.println("moving forward");
-          test++;
           moveForward();
           //delay(6000);
           break;
@@ -327,7 +340,9 @@ void loop() {
         case 'T' : //Line Follow mode
           LineFollow();
           break; 
-        
+        case 'M' : //move servo
+
+          break;
          
         default:
           i++;
@@ -336,7 +351,7 @@ void loop() {
       }
     }
   }
-
+  //TODO Case where switching functions 
     //SPDR = data  //sends value to master via SPDR
     indx = 0; //reset button to zero
 }
