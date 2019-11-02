@@ -6,8 +6,8 @@
 
 Servo myservo;
 
-#define PN532_IRQ   (9)   //set up the interrupt and reset
-#define PN532_RESET (17)  
+#define PN532_IRQ   (17)   //set up the interrupt and reset
+#define PN532_RESET (9)  
 int val;
 char buff [50];
 volatile byte indx;
