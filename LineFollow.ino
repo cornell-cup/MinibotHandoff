@@ -19,15 +19,13 @@ int left_read;
 int right_read;
 
 //CONSTANT TO GET THE REFLECTANCE OF A LINE
-int left_line_refl=814;
-int right_line_refl=763;
+int left_line_refl=870;
+int right_line_refl=835;
 
 int left_line=false;
 int right_line=false;
 
 void setup() {
- 
-  
   // put your setup code here, to run once:
  Serial.begin(9600);
   pinMode(Rmotor,OUTPUT);
@@ -51,7 +49,7 @@ void loop() {
     Serial.println(analogRead(left_Q));
     Serial.print("RIGHT SENSOR: ");
     Serial.println(analogRead(right_Q));
-    delay(500);
+    delay(20);
     
     if(!left_line && !right_line){
       drive_forward();
@@ -87,16 +85,16 @@ void stop(){
   analogWrite(RmotorPWM,0);
   analogWrite(LmotorPWM, 0);
 }
-void veer_left(){
-  digitalWrite(Rmotor,HIGH);
-  digitalWrite(Lmotor,HIGH);
-  analogWrite(RmotorPWM,80);
-  analogWrite(LmotorPWM, 20);
-}
-
 void veer_right(){
   digitalWrite(Rmotor,HIGH);
   digitalWrite(Lmotor,HIGH);
-  analogWrite(RmotorPWM,20);
-  analogWrite(LmotorPWM, 80);
+  analogWrite(RmotorPWM,140);
+  analogWrite(LmotorPWM, 50);
+}
+
+void veer_left(){
+  digitalWrite(Rmotor,HIGH);
+  digitalWrite(Lmotor,HIGH);
+  analogWrite(RmotorPWM,50);
+  analogWrite(LmotorPWM, 140);
 }
