@@ -20,17 +20,18 @@ double Integral1 = 0;
 int n = LOW;
 int m = LOW;
 
-int motor0pin1 = 2; // J3 on Board //right motors
-int motor0pin2 = 3; //pwm pin
+int motor1pin1 = 2; // J3 on Board //right motors
+int motor1pin2 = 3; //pwm pin
 int pwm0 = 80; //123
 int digital0 = 1; //0?
 
-int motor1pin1 = 8; // J4 on Board //left motors
-int motor1pin2 = 5; //pwm pin
+int motor0pin1 = 8; // J4 on Board //left motors
+int motor0pin2 = 5; //pwm pin
 int pwm1 = 80; //123
 int digital1 = 1; //0?
 
 //**line follow vars
+int set = 0;
 int left_Q = A6;
 int right_Q = A3;
 int left_calib;
@@ -44,8 +45,8 @@ int left_read;
 int right_read;
 
 //CONSTANT TO GET THE REFLECTANCE OF A LINE
-int left_line_refl=870;
-int right_line_refl=835;
+int left_line_refl=760;
+int right_line_refl=710;
 
 int left_line=false;
 int right_line=false;
@@ -346,6 +347,16 @@ void drive_forward() {
 }
 
 void LineFollow() {
+  if (set == 0) {
+    left_calib=analogRead(left_Q);
+    right_calib=analogRead(right_Q);
+
+    left_threshold = abs((left_calib-left_line_refl)/2);
+    right_threshold = abs((right_calib-right_line_refl)/2);
+    Serial.println(left_threshold);
+    Serial.println(right_threshold);
+  }
+  set++;  
     readSensors();
     Serial.print("LEFT SENSOR: ");
     Serial.println(analogRead(left_Q));
@@ -375,6 +386,9 @@ void LineFollow() {
 
 
 void loop() {
+  //delay(1000);
+  //LineFollow();
+  //veer_right();
   Serial.print(buff);
   Serial.println(" test");
  // moveForward();
@@ -393,12 +407,14 @@ void loop() {
         case 'F' : //fwd
           Serial.println("moving forward");
           moveForward();
+          set = 0;
           //delay(6000);
           break;
         case 'B' : //Backwards (back())
           Serial.println("back");
           digital0 = 0;
           digital1 = 0;
+          set = 0;
           PID();
          // delay(6000);
           break;
@@ -408,6 +424,7 @@ void loop() {
           digitalWrite(motor0pin1, HIGH);
           digitalWrite(motor1pin2, HIGH);
           digitalWrite(motor1pin1, LOW);
+          set = 0;
           //delay(6000);
           break;
         case 'R' : //right
@@ -415,6 +432,7 @@ void loop() {
           digitalWrite(motor0pin1, LOW);
           digitalWrite(motor1pin2, LOW);
           digitalWrite(motor1pin1, HIGH);
+          set = 0;
           //delay(6000);
           break; 
         case 'S' : //stop
@@ -423,15 +441,17 @@ void loop() {
           digitalWrite(motor1pin2, LOW);
           digitalWrite(motor1pin1, LOW);
           //delay(6000);
+          set = 0;
           break; 
         case 'T' : //Line Follow mode
           LineFollow();
           break; 
-        case 'M' : //move servo
+ //       case 'M' : //move servo
 
           break;
          
         default:
+          set = 0;
           i++;
           break; 
         
