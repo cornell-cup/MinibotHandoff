@@ -275,7 +275,7 @@ void moveForward() {
   //convert the time into distance: 29ms per cm
   cm = (duration/2)/29.1;
   Serial.println(cm);
-  if (in == 1 || cm < 10){
+  if (in == 1 || cm < 30){
     //stop
     digitalWrite(motor0pin2, HIGH);//1 high 2 low is clockwise
     digitalWrite(motor0pin1, LOW);
@@ -325,15 +325,18 @@ void stop(){
 void veer_right(){
   digitalWrite(motor0pin1,HIGH);
   digitalWrite(motor1pin1,HIGH);
-  analogWrite(motor0pin2,140);
-  analogWrite(motor1pin2, 50);
+  analogWrite(motor0pin2,110);
+  analogWrite(motor1pin2, 10);
 }
 
 void veer_left(){
   digitalWrite(motor0pin1,HIGH);
   digitalWrite(motor1pin1,HIGH);
-  analogWrite(motor0pin2,50);
-  analogWrite(motor1pin2, 140);
+//  analogWrite(motor0pin2,50);
+//  analogWrite(motor1pin2, 140);
+    analogWrite(motor0pin2,10);
+    analogWrite(motor1pin2, 110);
+
 }
 void readSensors(){
   left_line= (((analogRead(left_Q)-left_line_refl)<left_threshold) ||(left_line_refl-analogRead(left_Q))>left_threshold);
@@ -362,19 +365,21 @@ void LineFollow() {
     Serial.println(analogRead(left_Q));
     Serial.print("RIGHT SENSOR: ");
     Serial.println(analogRead(right_Q));
-    delay(20);
+    //delay(20);
     
     if(!left_line && !right_line){
       drive_forward();
       Serial.println("forward no line");
     }
    else if(!left_line && right_line){
-      veer_left();
-      Serial.println("veer left");
+      //veer_left();
+      veer_right();
+      Serial.println("veer Right");
     }
     else if(left_line && !right_line){
-      veer_right();
-      Serial.println("veer right");
+      //veer_right();
+      veer_left();
+      Serial.println("veer Left");
     }
     else {
       drive_forward();
@@ -386,6 +391,8 @@ void LineFollow() {
 
 
 void loop() {
+   LineFollow();
+   //veer_right();
   //delay(1000);
   //LineFollow();
   //veer_right();
@@ -402,6 +409,7 @@ void loop() {
  //   Serial.println("work");
     Serial.print(buff); //print to serial monitor
     int i = 0;
+   
     if (i < sizeof(buff)) {
       switch(buff[i]) {
         case 'F' : //fwd
