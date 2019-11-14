@@ -11,7 +11,11 @@ Line Follow mode:       T
 Object Detection mode:  O
 
 
-HOW TO RUN: You type into terminal
+HOW TO RUN: 
+use moba xterm or another terminal to ssh into the pi by typing in:
+ssh pi@<insert the ip address here>
+  
+You type into terminal
 
 cd MinibotHandoff 
 
