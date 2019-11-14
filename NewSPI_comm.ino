@@ -14,21 +14,43 @@ int encoder1Pos = 0;
 int encoder1PinALast = LOW;
 
 int encoderCountpRev = 360;
-int setpoint = 200; //(degrees/sec) 
+int setpoint = 120; //(degrees/sec) 
 double Integral0 = 0;
 double Integral1 = 0;
 int n = LOW;
 int m = LOW;
 
-int motor0pin1 = 2; // J3 on Board
+int motor0pin1 = 2; // J3 on Board //right motors
 int motor0pin2 = 3; //pwm pin
-int pwm0 = 123; //123
+int pwm0 = 80; //123
 int digital0 = 1; //0?
 
-int motor1pin1 = 8; // J4 on Board
+int motor1pin1 = 8; // J4 on Board //left motors
 int motor1pin2 = 5; //pwm pin
-int pwm1 = 123; //123
+int pwm1 = 80; //123
 int digital1 = 1; //0?
+
+//**line follow vars
+int left_Q = A6;
+int right_Q = A3;
+int left_calib;
+int right_calib;
+//***line follow vars
+int left_threshold;
+int right_threshold;
+
+
+int left_read;
+int right_read;
+
+//CONSTANT TO GET THE REFLECTANCE OF A LINE
+int left_line_refl=870;
+int right_line_refl=835;
+
+int left_line=false;
+int right_line=false;
+
+
 
 int encoder0PrevCount = 0;
 int lastSpeed0 = 0;
@@ -37,9 +59,9 @@ int lastSpeed1 = 0;
 
 double timeSec = .5;
 
-double kP = 0.20;//0.20 or .15
-double kI = 0.01;//0.01 or .05
-double kD = 0.01;//0.01 or .01
+double kP = 0.25;//0.20 or .15
+double kI = 0.2;//0.01 or .05
+double kD = 0.211;//0.01 or .01
 
 int val;
 int test;
@@ -75,7 +97,13 @@ void setup() {
   pinMode(20,OUTPUT);
   pinMode(22,OUTPUT);
   
+//linefollow***************
+left_calib=analogRead(left_Q);
+  right_calib=analogRead(right_Q);
 
+  left_threshold = abs((left_calib-left_line_refl)/2);
+  right_threshold = abs((right_calib-right_line_refl)/2);
+//linefollow***************
   
   SPCR |= bit (SPE); // slave control register
   indx = 0; //buffer empty
@@ -135,8 +163,8 @@ void adjustPWM() {
   int adjust0 = (kP * (double)error0) + kI * Integral0 + kD * dError0;
   int adjust1 = (kP * (double)error1) + kI * Integral1 + kD * dError1;
 
-  if (digital0 == 0) pwm0 -= adjust0;
-  else pwm0 += adjust0;
+  if (digital0 == 0) pwm0 += adjust0;
+  else pwm0 -= adjust0;
 
   if (digital1 == 0) pwm1 += adjust1;    
   else pwm1 -= adjust1;
@@ -260,17 +288,18 @@ void moveForward() {
   }
   else {
     //move
-   // PID();
-    digitalWrite(motor0pin2, LOW);//1 high 2 low is clockwise
-    digitalWrite(motor0pin1, HIGH);
-    digitalWrite(motor1pin2, LOW);
-    digitalWrite(motor1pin1, HIGH);
+    digital0 = 1;
+    digital1 = 1;
+    PID();
+//    digitalWrite(motor0pin2, LOW);//1 high 2 low is clockwise
+//    digitalWrite(motor0pin1, HIGH);
+//    digitalWrite(motor1pin2, LOW);
+//    digitalWrite(motor1pin1, HIGH);
     //delay(400);
     Serial.println("move");
   }
   //check again
    if (in == 1 || cm < 10){
-
    if( in == 1)
     Serial.println("IR detects");
     //stop
@@ -285,17 +314,73 @@ void moveForward() {
     Serial.println("stop");
   } 
 }
-
-void LineFollow() {
-  
+//***Line follow functions***
+void stop(){
+  digitalWrite(motor0pin1,LOW);
+  digitalWrite(motor1pin1,LOW);
+  analogWrite(motor0pin2,0);
+  analogWrite(motor1pin2, 0);
+}
+void veer_right(){
+  digitalWrite(motor0pin1,HIGH);
+  digitalWrite(motor1pin1,HIGH);
+  analogWrite(motor0pin2,140);
+  analogWrite(motor1pin2, 50);
 }
 
+void veer_left(){
+  digitalWrite(motor0pin1,HIGH);
+  digitalWrite(motor1pin1,HIGH);
+  analogWrite(motor0pin2,50);
+  analogWrite(motor1pin2, 140);
+}
+void readSensors(){
+  left_line= (((analogRead(left_Q)-left_line_refl)<left_threshold) ||(left_line_refl-analogRead(left_Q))>left_threshold);
+  right_line=((analogRead(right_Q)-right_line_refl<right_threshold) || (left_line_refl-analogRead(right_Q))>right_threshold);
+}
+void drive_forward() {
+  digitalWrite(motor0pin1,HIGH); 
+  digitalWrite(motor1pin1,HIGH);
+  analogWrite(motor0pin2,75);
+  analogWrite(motor1pin2, 75);
+}
+
+void LineFollow() {
+    readSensors();
+    Serial.print("LEFT SENSOR: ");
+    Serial.println(analogRead(left_Q));
+    Serial.print("RIGHT SENSOR: ");
+    Serial.println(analogRead(right_Q));
+    delay(20);
+    
+    if(!left_line && !right_line){
+      drive_forward();
+      Serial.println("forward no line");
+    }
+   else if(!left_line && right_line){
+      veer_left();
+      Serial.println("veer left");
+    }
+    else if(left_line && !right_line){
+      veer_right();
+      Serial.println("veer right");
+    }
+    else {
+      drive_forward();
+      Serial.println("forward else");
+    }
+}
+
+//**Line follow functions***
+
+
 void loop() {
-  
   Serial.print(buff);
   Serial.println(" test");
  // moveForward();
-
+//  digital0 = 1;
+//  digital1 = 1;
+//  PID();
   if (process) {
     buff[indx] = 0;
     process = false; //reset flag
@@ -312,10 +397,9 @@ void loop() {
           break;
         case 'B' : //Backwards (back())
           Serial.println("back");
-          digitalWrite(motor0pin2, HIGH);
-          digitalWrite(motor0pin1, LOW);
-          digitalWrite(motor1pin2, HIGH);
-          digitalWrite(motor1pin1, LOW);
+          digital0 = 0;
+          digital1 = 0;
+          PID();
          // delay(6000);
           break;
         case 'L' : //left
