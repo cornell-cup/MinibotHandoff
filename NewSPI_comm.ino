@@ -45,8 +45,8 @@ int left_read;
 int right_read;
 
 //CONSTANT TO GET THE REFLECTANCE OF A LINE
-int left_line_refl=760;
-int right_line_refl=710;
+int left_line_refl=990;
+int right_line_refl=985;
 
 int left_line=false;
 int right_line=false;
@@ -325,8 +325,8 @@ void stop(){
 void veer_right(){
   digitalWrite(motor0pin1,HIGH);
   digitalWrite(motor1pin1,HIGH);
-  analogWrite(motor0pin2,110);
-  analogWrite(motor1pin2, 10);
+  analogWrite(motor0pin2,120);//160
+  analogWrite(motor1pin2, 30);//70
 }
 
 void veer_left(){
@@ -334,8 +334,8 @@ void veer_left(){
   digitalWrite(motor1pin1,HIGH);
 //  analogWrite(motor0pin2,50);
 //  analogWrite(motor1pin2, 140);
-    analogWrite(motor0pin2,10);
-    analogWrite(motor1pin2, 110);
+    analogWrite(motor0pin2,30); //70
+    analogWrite(motor1pin2, 120); //160
 
 }
 void readSensors(){
@@ -345,8 +345,8 @@ void readSensors(){
 void drive_forward() {
   digitalWrite(motor0pin1,HIGH); 
   digitalWrite(motor1pin1,HIGH);
-  analogWrite(motor0pin2,75);
-  analogWrite(motor1pin2, 75);
+  analogWrite(motor0pin2,90); //100
+  analogWrite(motor1pin2,90);//100
 }
 
 void LineFollow() {
@@ -354,8 +354,10 @@ void LineFollow() {
     left_calib=analogRead(left_Q);
     right_calib=analogRead(right_Q);
 
-    left_threshold = abs((left_calib-left_line_refl)/2);
-    right_threshold = abs((right_calib-right_line_refl)/2);
+    left_threshold = abs((left_calib-left_line_refl)/4);
+    right_threshold = abs((right_calib-right_line_refl)/4);
+    Serial.println(left_calib);
+    Serial.println(right_calib);
     Serial.println(left_threshold);
     Serial.println(right_threshold);
   }
@@ -365,20 +367,16 @@ void LineFollow() {
     Serial.println(analogRead(left_Q));
     Serial.print("RIGHT SENSOR: ");
     Serial.println(analogRead(right_Q));
-    //delay(20);
-    
-    if(!left_line && !right_line){
-      drive_forward();
-      Serial.println("forward no line");
-    }
-   else if(!left_line && right_line){
+    delay(20);
+ 
+   if(!(abs(analogRead(left_Q)-left_line_refl)>left_threshold)){
       //veer_left();
-      veer_right();
+      veer_left();
       Serial.println("veer Right");
     }
-    else if(left_line && !right_line){
+    else if(!(abs(analogRead(right_Q)-right_line_refl)>right_threshold)){
       //veer_right();
-      veer_left();
+      veer_right();
       Serial.println("veer Left");
     }
     else {
@@ -391,7 +389,7 @@ void LineFollow() {
 
 
 void loop() {
-   LineFollow();
+   //LineFollow();
    //veer_right();
   //delay(1000);
   //LineFollow();
