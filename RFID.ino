@@ -7,8 +7,8 @@
 // If using the breakout or shield with I2C, define just the pins connected
 // to the IRQ and reset lines.  Use the values below (2, 3) for the shield!
 //use J11 on the PCB
-#define PN532_IRQ   (9)
-#define PN532_RESET (17)  // Not connected by default on the NFC Shield
+#define PN532_IRQ   (17)
+#define PN532_RESET (9)  // Not connected by default on the NFC Shield
 int LED1 = 14;    //Green LED
 int LED2 = 6;    //Yellow LED
 int LED3 = 4;    //Red LED
