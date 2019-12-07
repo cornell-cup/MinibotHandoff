@@ -3,6 +3,7 @@
 
 elapsedMillis timeElapsed;
 
+int val;
 int encoder0PinA = A1; //J3 motor on board
 //int encoder0PinB = 4;
 int encoder0Pos = 0;
@@ -20,13 +21,13 @@ double Integral1 = 0;
 int n = LOW;
 int m = LOW;
 
-int motor1pin1 = 2; // J3 on Board //right motors
-int motor1pin2 = 3; //pwm pin
+int motor0pin1 = 2; // J3 on Board //right motors
+int motor0pin2 = 3; //pwm pin
 int pwm0 = 80; //123
 int digital0 = 1; //0?
 
-int motor0pin1 = 8; // J4 on Board //left motors
-int motor0pin2 = 5; //pwm pin
+int motor1pin1 = 8; // J4 on Board //left motors
+int motor1pin2 = 5; //pwm pin
 int pwm1 = 80; //123
 int digital1 = 1; //0?
 
@@ -64,7 +65,7 @@ double kP = 0.25;//0.20 or .15
 double kI = 0.2;//0.01 or .05
 double kD = 0.211;//0.01 or .01
 
-int val;
+
 int test;
 char buff [50];
 volatile byte indx;
@@ -80,7 +81,7 @@ long duration,cm;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  
 
   pinMode (encoder0PinA, INPUT);
   //  pinMode (encoder0PinB, INPUT);
@@ -92,14 +93,15 @@ void setup() {
   pinMode (motor1pin1, OUTPUT);
   pinMode (motor1pin2, OUTPUT);
 
+  Serial.begin(115200);
   pinMode(MISO,OUTPUT); //init spi
-  pinMode(3,OUTPUT);
+  //pinMode(3,OUTPUT);
 
   pinMode(20,OUTPUT);
   pinMode(22,OUTPUT);
   
 //linefollow***************
-left_calib=analogRead(left_Q);
+  left_calib=analogRead(left_Q);
   right_calib=analogRead(right_Q);
 
   left_threshold = abs((left_calib-left_line_refl)/2);
@@ -193,31 +195,30 @@ void adjustPWM() {
 
 int calculateSpeed0() {
   int speedDetect = (encoder0Pos - encoder0PrevCount) / timeSec;
+  Serial.print("Encoder0pos: ");
   Serial.print( encoder0Pos );
   Serial.print("  ");
   Serial.println( encoder0PrevCount);
   encoder0PrevCount = encoder0Pos;
-  Serial.print( "Speed: ");
+  Serial.print( "Speed0: ");
   Serial.println( speedDetect);
   return speedDetect;
 }
 
 int calculateSpeed1() {
   int speedDetect = (encoder1Pos - encoder1PrevCount) / timeSec;
+  Serial.print("Encoder0pos: ");
   Serial.print( encoder1Pos);
   Serial.print("  ");
   Serial.println( encoder1PrevCount);
   encoder1PrevCount = encoder1Pos;
-  Serial.print( "Speed: ");
+  Serial.print( "Speed1: ");
   Serial.println( speedDetect);
   return speedDetect;
 }
 
 void PID() {
-  Serial.println(digital0);
-  Serial.println(digital1);
-  
-  if (digital0 == 1)
+   if (digital0 == 1)
     digitalWrite( motor0pin1, HIGH);
   else digitalWrite( motor0pin1, LOW);
   analogWrite( motor0pin2, pwm0);
@@ -259,6 +260,7 @@ void PID() {
   Serial.println(timeSec); // time needs to be fixed
   adjustPWM();
   Serial.println(" ");
+
 }
 
 void moveForward() {
@@ -289,8 +291,6 @@ void moveForward() {
   }
   else {
     //move
-    digital0 = 1;
-    digital1 = 1;
     PID();
 //    digitalWrite(motor0pin2, LOW);//1 high 2 low is clockwise
 //    digitalWrite(motor0pin1, HIGH);
@@ -399,7 +399,7 @@ void loop() {
  // moveForward();
 //  digital0 = 1;
 //  digital1 = 1;
-//  PID();
+ // PID();
   if (process) {
     buff[indx] = 0;
     process = false; //reset flag
@@ -412,7 +412,14 @@ void loop() {
       switch(buff[i]) {
         case 'F' : //fwd
           Serial.println("moving forward");
-          moveForward();
+          digital0 = 1;
+          digital1 = 1;
+          PID();
+          //moveForward();
+          //digitalWrite(motor0pin2, LOW);
+          //digitalWrite(motor0pin1, HIGH);
+          //digitalWrite(motor1pin2, LOW);
+          //digitalWrite(motor1pin1, HIGH);
           set = 0;
           //delay(6000);
           break;
