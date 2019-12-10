@@ -46,8 +46,8 @@ int left_read;
 int right_read;
 
 //CONSTANT TO GET THE REFLECTANCE OF A LINE
-int left_line_refl=990;
-int right_line_refl=985;
+int left_line_refl=870;
+int right_line_refl=835;
 
 int left_line=false;
 int right_line=false;
@@ -325,18 +325,15 @@ void stop(){
 void veer_right(){
   digitalWrite(motor0pin1,HIGH);
   digitalWrite(motor1pin1,HIGH);
-  analogWrite(motor0pin2,120);//160
-  analogWrite(motor1pin2, 30);//70
+  analogWrite(motor0pin2,140);
+  analogWrite(motor1pin2, 50);
 }
 
 void veer_left(){
   digitalWrite(motor0pin1,HIGH);
   digitalWrite(motor1pin1,HIGH);
-//  analogWrite(motor0pin2,50);
-//  analogWrite(motor1pin2, 140);
-    analogWrite(motor0pin2,30); //70
-    analogWrite(motor1pin2, 120); //160
-
+  analogWrite(motor0pin2,50);
+  analogWrite(motor1pin2, 140);
 }
 void readSensors(){
   left_line= (((analogRead(left_Q)-left_line_refl)<left_threshold) ||(left_line_refl-analogRead(left_Q))>left_threshold);
@@ -345,8 +342,8 @@ void readSensors(){
 void drive_forward() {
   digitalWrite(motor0pin1,HIGH); 
   digitalWrite(motor1pin1,HIGH);
-  analogWrite(motor0pin2,90); //100
-  analogWrite(motor1pin2,90);//100
+  analogWrite(motor0pin2,75);
+  analogWrite(motor1pin2, 75);
 }
 
 void LineFollow() {
@@ -354,8 +351,8 @@ void LineFollow() {
     left_calib=analogRead(left_Q);
     right_calib=analogRead(right_Q);
 
-    left_threshold = abs((left_calib-left_line_refl)/4);
-    right_threshold = abs((right_calib-right_line_refl)/4);
+    left_threshold = abs((left_calib-left_line_refl)/2);
+    right_threshold = abs((right_calib-right_line_refl)/2);
     Serial.println(left_calib);
     Serial.println(right_calib);
     Serial.println(left_threshold);
@@ -369,15 +366,17 @@ void LineFollow() {
     Serial.println(analogRead(right_Q));
     delay(20);
  
-   if(!(abs(analogRead(left_Q)-left_line_refl)>left_threshold)){
-      //veer_left();
-      veer_left();
-      Serial.println("veer Right");
+   if(!left_line && !right_line){
+      drive_forward();
+      Serial.println("forward no line");
     }
-    else if(!(abs(analogRead(right_Q)-right_line_refl)>right_threshold)){
-      //veer_right();
+   else if(!left_line && right_line){
+      veer_left();
+      Serial.println("veer left");
+    }
+    else if(left_line && !right_line){
       veer_right();
-      Serial.println("veer Left");
+      Serial.println("veer right");
     }
     else {
       drive_forward();
@@ -475,5 +474,3 @@ void loop() {
     //SPDR = data  //sends value to master via SPDR
     indx = 0; //reset button to zero
 }
-
-  
