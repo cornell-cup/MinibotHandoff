@@ -274,7 +274,7 @@ void moveForward() {
   duration = pulseIn(echoPin,HIGH);
   //convert the time into distance: 29ms per cm
   cm = (duration/2)/29.1;
-//  Serial.println(cm);
+  Serial.println(cm);
   if (in == 1 || cm < 30){
     //stop
     digitalWrite(motor0pin2, HIGH);//1 high 2 low is clockwise
@@ -386,7 +386,7 @@ void LineFollow() {
 
 
 void loop() {
-
+//  moveForward();
 //  Serial.println(" test");
   if (process) {
 //    buff[indx] = 0; Use later for multiple parameters
@@ -401,10 +401,8 @@ void loop() {
     switch(updated) {
       case 'F' : //fwd
 //          Serial.println("moving forward");
-        digital0 = 1;
-        digital1 = 1;
-        PID();
-        //moveForward();
+        
+        moveForward();
         //digitalWrite(motor0pin2, LOW);
         //digitalWrite(motor0pin1, HIGH);
         //digitalWrite(motor1pin2, LOW);
