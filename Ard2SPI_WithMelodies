@@ -338,6 +338,8 @@ ISR (SPI_STC_vect) //SPI Interrupt Service Routine
 
 void loop() {
 
+
+
 Serial.println("go");
   if (process) {
     buff[indx] = 0;
@@ -359,6 +361,8 @@ Serial.println("go");
 
     //SPDR = data  //sends value to master via SPDR
     indx = 0; //reset button to zero
+    
+    
 }
 
 void RFID(){
@@ -371,7 +375,7 @@ void RFID(){
   uint8_t obj3[] = {0xC9, 0x82, 0xC, 0xF4};  //for the blue key tags
   uint8_t uidLength;
 
-Serial.println("Sensor ready!");
+  Serial.println("Sensor ready!");
   detector = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
       //Comment again if not right^
       if(detector){
@@ -575,4 +579,3 @@ void harryPotter(){
 
 
 }
- 
