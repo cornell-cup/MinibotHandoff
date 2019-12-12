@@ -21,7 +21,7 @@ double Integral1 = 0;
 int n = LOW;
 int m = LOW;
 
-int motor0pin1 = 2; // J3 on Board //right motors
+int motor0pin1 = 2; // J3 on Board //right motors  *******************SWITCH MOTORS IN HARDWARE
 int motor0pin2 = 3; //pwm pin
 int pwm0 = 80; //123
 int digital0 = 1; //0?
@@ -289,6 +289,8 @@ void moveForward() {
   }
   else {
     //move
+    digital0 = 1;
+    digital1 = 1;
     PID();
 //    digitalWrite(motor0pin2, LOW);//1 high 2 low is clockwise
 //    digitalWrite(motor0pin1, HIGH);
