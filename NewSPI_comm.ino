@@ -67,7 +67,8 @@ double kD = 0.211;//0.01 or .01
 
 
 int test;
-char buff [50];
+//char buff [50]; Use multiple parameters
+char updated;
 volatile byte indx;
 volatile boolean process;
 int  interruptPin = 10;
@@ -120,7 +121,7 @@ void setup() {
   SPI.attachInterrupt();
  // attachInterrupt(digitalPinToInterrupt(interruptPin), tester, LOW); //enable interrupt
   //val = 1;
-  //Serial.print(val);
+
   
   pinMode(IRPin, INPUT); 
   pinMode(trigPin, OUTPUT);
@@ -128,16 +129,13 @@ void setup() {
   test = 0;
   }
 
-ISR (SPI_STC_vect) //SPI Interrupt Service Routine
-//void tester() 
-{
+ISR (SPI_STC_vect) { //SPI Interrupt Service Routine
  // digitalWrite(3,1);
   //Serial.println("work");
   byte c = SPDR; //read byte from SPI data register
-  if (indx < sizeof (buff) - 1) 
-    buff [indx++] = c;// save data in the next index in the array buff
+  updated = c;// save data in the next index in the array buff
  // if (c == '\r') //check for the end of the word
-    process = true;
+  process = true;
   
 }  
 
@@ -155,13 +153,13 @@ void adjustPWM() {
 
   if (Integral0 > 255) Integral0 = 255;
   else if (Integral0 < 0) Integral0 = 0;
-  Serial.print("Integral0: ");
-  Serial.println( Integral0);
+//  Serial.print("Integral0: ");
+//  Serial.println( Integral0);
 
   if (Integral1 > 255) Integral1 = 255;
   else if (Integral1 < 0) Integral1 = 0;
-  Serial.print("Integral1: ");
-  Serial.println( Integral1);
+//  Serial.print("Integral1: ");
+//  Serial.println( Integral1);
 
   int adjust0 = (kP * (double)error0) + kI * Integral0 + kD * dError0;
   int adjust1 = (kP * (double)error1) + kI * Integral1 + kD * dError1;
@@ -180,40 +178,40 @@ void adjustPWM() {
 
   lastSpeed0 = speedNow0;
   lastSpeed1 = speedNow1;
-
-  Serial.print("adjustment0: ");
-  Serial.println( adjust0);
-  Serial.print("PWM0: ");
-  Serial.println( pwm0 );
-
-  Serial.print("adjustment1: ");
-  Serial.println( adjust1);
-  Serial.print("PWM1: ");
-  Serial.println( pwm1 );
+//
+//  Serial.print("adjustment0: ");
+//  Serial.println( adjust0);
+//  Serial.print("PWM0: ");
+//  Serial.println( pwm0 );
+//
+//  Serial.print("adjustment1: ");
+//  Serial.println( adjust1);
+//  Serial.print("PWM1: ");
+//  Serial.println( pwm1 );
 }
 
 
 int calculateSpeed0() {
   int speedDetect = (encoder0Pos - encoder0PrevCount) / timeSec;
-  Serial.print("Encoder0pos: ");
-  Serial.print( encoder0Pos );
-  Serial.print("  ");
-  Serial.println( encoder0PrevCount);
+//  Serial.print("Encoder0pos: ");
+//  Serial.print( encoder0Pos );
+//  Serial.print("  ");
+//  Serial.println( encoder0PrevCount);
   encoder0PrevCount = encoder0Pos;
-  Serial.print( "Speed0: ");
-  Serial.println( speedDetect);
+//  Serial.print( "Speed0: ");
+//  Serial.println( speedDetect);
   return speedDetect;
 }
 
 int calculateSpeed1() {
   int speedDetect = (encoder1Pos - encoder1PrevCount) / timeSec;
-  Serial.print("Encoder0pos: ");
-  Serial.print( encoder1Pos);
-  Serial.print("  ");
-  Serial.println( encoder1PrevCount);
+//  Serial.print("Encoder0pos: ");
+//  Serial.print( encoder1Pos);
+//  Serial.print("  ");
+//  Serial.println( encoder1PrevCount);
   encoder1PrevCount = encoder1Pos;
-  Serial.print( "Speed1: ");
-  Serial.println( speedDetect);
+//  Serial.print( "Speed1: ");
+//  Serial.println( speedDetect);
   return speedDetect;
 }
 
@@ -256,18 +254,18 @@ void PID() {
   //unsigned long CurrentTime = millis();
   //unsigned long ElapsedTime = CurrentTime - StartTime;
   timeSec = 1.0 ;//(double)( ElapsedTime * .001);
-  Serial.print( "Time: ");
-  Serial.println(timeSec); // time needs to be fixed
+//  Serial.print( "Time: ");
+//  Serial.println(timeSec); // time needs to be fixed
   adjustPWM();
-  Serial.println(" ");
+//  Serial.println(" ");
 
 }
 
 void moveForward() {
-  Serial.println("forward code");
+//  Serial.println("forward code");
     //low is nearby, high is far
   in = digitalRead(IRPin);
-  Serial.println(in);
+//  Serial.println(in);
   digitalWrite(trigPin,LOW);
   delayMicroseconds(30);
   digitalWrite(trigPin,HIGH);
@@ -276,7 +274,7 @@ void moveForward() {
   duration = pulseIn(echoPin,HIGH);
   //convert the time into distance: 29ms per cm
   cm = (duration/2)/29.1;
-  Serial.println(cm);
+//  Serial.println(cm);
   if (in == 1 || cm < 30){
     //stop
     digitalWrite(motor0pin2, HIGH);//1 high 2 low is clockwise
@@ -287,7 +285,7 @@ void moveForward() {
     digitalWrite(motor0pin2, LOW);
     digitalWrite(motor1pin2, LOW);
     delay(1000);
-    Serial.println("stop");
+//    Serial.println("stop");
   }
   else {
     //move
@@ -297,12 +295,12 @@ void moveForward() {
 //    digitalWrite(motor1pin2, LOW);
 //    digitalWrite(motor1pin1, HIGH);
     //delay(400);
-    Serial.println("move");
+//    Serial.println("move");
   }
   //check again
    if (in == 1 || cm < 10){
    if( in == 1)
-    Serial.println("IR detects");
+//    Serial.println("IR detects");
     //stop
     digitalWrite(motor0pin2, HIGH);//1 high 2 low is clockwise
     digitalWrite(motor0pin1, LOW);
@@ -312,7 +310,7 @@ void moveForward() {
     digitalWrite(motor0pin2, LOW);
     digitalWrite(motor1pin2, LOW);
     delay(1000);
-    Serial.println("stop");
+//    Serial.println("stop");
   } 
 }
 //***Line follow functions***
@@ -353,34 +351,34 @@ void LineFollow() {
 
     left_threshold = abs((left_calib-left_line_refl)/2);
     right_threshold = abs((right_calib-right_line_refl)/2);
-    Serial.println(left_calib);
-    Serial.println(right_calib);
-    Serial.println(left_threshold);
-    Serial.println(right_threshold);
+//    Serial.println(left_calib);
+//    Serial.println(right_calib);
+//    Serial.println(left_threshold);
+//    Serial.println(right_threshold);
   }
   set++;  
     readSensors();
-    Serial.print("LEFT SENSOR: ");
-    Serial.println(analogRead(left_Q));
-    Serial.print("RIGHT SENSOR: ");
-    Serial.println(analogRead(right_Q));
+//    Serial.print("LEFT SENSOR: ");
+//    Serial.println(analogRead(left_Q));
+//    Serial.print("RIGHT SENSOR: ");
+//    Serial.println(analogRead(right_Q));
     delay(20);
  
    if(!left_line && !right_line){
       drive_forward();
-      Serial.println("forward no line");
+//      Serial.println("forward no line");
     }
    else if(!left_line && right_line){
       veer_left();
-      Serial.println("veer left");
+//      Serial.println("veer left");
     }
     else if(left_line && !right_line){
       veer_right();
-      Serial.println("veer right");
+//      Serial.println("veer right");
     }
     else {
       drive_forward();
-      Serial.println("forward else");
+//      Serial.println("forward else");
     }
 }
 
@@ -388,89 +386,81 @@ void LineFollow() {
 
 
 void loop() {
-   //LineFollow();
-   //veer_right();
-  //delay(1000);
-  //LineFollow();
-  //veer_right();
-  Serial.print(buff);
-  Serial.println(" test");
- // moveForward();
-//  digital0 = 1;
-//  digital1 = 1;
- // PID();
+
+//  Serial.println(" test");
   if (process) {
-    buff[indx] = 0;
+//    buff[indx] = 0; Use later for multiple parameters
     process = false; //reset flag
 //    digitalWrite(3,0);
  //   Serial.println("work");
-    Serial.print(buff); //print to serial monitor
-    int i = 0;
+//    Serial.print(buff); //print to serial monitor
+//    int i = 0;
    
-    if (i < sizeof(buff)) {
-      switch(buff[i]) {
-        case 'F' : //fwd
-          Serial.println("moving forward");
-          digital0 = 1;
-          digital1 = 1;
-          PID();
-          //moveForward();
-          //digitalWrite(motor0pin2, LOW);
-          //digitalWrite(motor0pin1, HIGH);
-          //digitalWrite(motor1pin2, LOW);
-          //digitalWrite(motor1pin1, HIGH);
-          set = 0;
-          //delay(6000);
-          break;
-        case 'B' : //Backwards (back())
-          Serial.println("back");
-          digital0 = 0;
-          digital1 = 0;
-          set = 0;
-          PID();
-         // delay(6000);
-          break;
-        case 'L' : //left
-          Serial.println("Left");
-          digitalWrite(motor0pin2, LOW);
-          digitalWrite(motor0pin1, HIGH);
-          digitalWrite(motor1pin2, HIGH);
-          digitalWrite(motor1pin1, LOW);
-          set = 0;
-          //delay(6000);
-          break;
-        case 'R' : //right
-          digitalWrite(motor0pin2, HIGH);
-          digitalWrite(motor0pin1, LOW);
-          digitalWrite(motor1pin2, LOW);
-          digitalWrite(motor1pin1, HIGH);
-          set = 0;
-          //delay(6000);
-          break; 
-        case 'S' : //stop
-          digitalWrite(motor0pin2, LOW);
-          digitalWrite(motor0pin1, LOW);
-          digitalWrite(motor1pin2, LOW);
-          digitalWrite(motor1pin1, LOW);
-          //delay(6000);
-          set = 0;
-          break; 
-        case 'T' : //Line Follow mode
-          LineFollow();
-          break; 
- //       case 'M' : //move servo
+//    if (i < sizeof(buff)) {  //Multiple parameteres
+    Serial.println(updated);
+    switch(updated) {
+      case 'F' : //fwd
+//          Serial.println("moving forward");
+        digital0 = 1;
+        digital1 = 1;
+        PID();
+        //moveForward();
+        //digitalWrite(motor0pin2, LOW);
+        //digitalWrite(motor0pin1, HIGH);
+        //digitalWrite(motor1pin2, LOW);
+        //digitalWrite(motor1pin1, HIGH);
+        set = 0;
+        //delay(6000);
+        break;
+      case 'B' : //Backwards (back())
+//          Serial.println("back");
+        digital0 = 0;
+        digital1 = 0;
+        set = 0;
+        PID();
+       // delay(6000);
+        break;
+      case 'L' : //left
+//          Serial.println("Left");
+        digitalWrite(motor0pin2, LOW);
+        digitalWrite(motor0pin1, HIGH);
+        digitalWrite(motor1pin2, HIGH);
+        digitalWrite(motor1pin1, LOW);
+        set = 0;
+        //delay(6000);
+        break;
+      case 'R' : //right
+        digitalWrite(motor0pin2, HIGH);
+        digitalWrite(motor0pin1, LOW);
+        digitalWrite(motor1pin2, LOW);
+        digitalWrite(motor1pin1, HIGH);
+        set = 0;
+        //delay(6000);
+        break; 
+      case 'S' : //stop
+        digitalWrite(motor0pin2, LOW);
+        digitalWrite(motor0pin1, LOW);
+        digitalWrite(motor1pin2, LOW);
+        digitalWrite(motor1pin1, LOW);
+        //delay(6000);
+        set = 0;
+        break; 
+      case 'T' : //Line Follow mode
+        LineFollow();
+        break; 
+//       case 'M' : //move servo
 
-          break;
-         
-        default:
-          set = 0;
-          i++;
-          break; 
-        
-      }
+        break;
+       
+      default:
+        set = 0;
+        //i++;
+        break; 
+      
     }
+   // }
   }
   //TODO Case where switching functions 
     //SPDR = data  //sends value to master via SPDR
-    indx = 0; //reset button to zero
+    //indx = 0; //reset button to zero
 }
