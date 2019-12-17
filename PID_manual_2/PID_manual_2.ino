@@ -9,12 +9,11 @@ int encoder0Pos = 0;
 int encoder0PinALast = LOW;
 
 int encoder1PinA = A2; //J4 motor on board
-//int encoder1PinB = 8;
-int encoder1Pos = 0;
+ int encoder1Pos = 0;
 int encoder1PinALast = LOW;
 
 int encoderCountpRev = 360;
-int setpoint = 200; //(degrees/sec) 
+int setpoint = 120; //(degrees/sec)
 double Integral0 = 0;
 double Integral1 = 0;
 int n = LOW;
@@ -22,12 +21,12 @@ int m = LOW;
 
 int motor0pin1 = 2; // J3 on Board
 int motor0pin2 = 3; //pwm pin
-int pwm0 = 123; //123
+int pwm0 = 80; //123
 int digital0 = 1; //0?
 
 int motor1pin1 = 8; // J4 on Board
 int motor1pin2 = 5; //pwm pin
-int pwm1 = 123; //123
+int pwm1 = 80; //123
 int digital1 = 1; //0?
 
 int encoder0PrevCount = 0;
@@ -37,9 +36,9 @@ int lastSpeed1 = 0;
 
 double timeSec = .5;
 
-double kP = 0.20;//0.20 or .15
-double kI = 0.01;//0.01 or .05
-double kD = 0.01;//0.01 or .01
+double kP = 0.25;//0.20 or .15
+double kI = 0.2;//0.01 or .05
+double kD = 0.211;//0.01 or .01
 
 void setup() {
   pinMode (encoder0PinA, INPUT);
@@ -54,16 +53,15 @@ void setup() {
 
   // attachInterrupt(0, countInterrupt0, CHANGE);
   // attachInterrupt(1, countInterrupt1, CHANGE);
-  Serial.begin (9600);
+  Serial.begin (115200);
 }
 
 void loop() {
-  if (digital0 == 1)
+   if (digital0 == 1)
     digitalWrite( motor0pin1, HIGH);
   else digitalWrite( motor0pin1, LOW);
   analogWrite( motor0pin2, pwm0);
 
-  //digital1 = 0;
   if (digital1 == 1)
     digitalWrite( motor1pin1, HIGH);
   else digitalWrite( motor1pin1, LOW);
