@@ -4,30 +4,35 @@
 elapsedMillis timeElapsed;
 
 int val;
+//Regulates two motors to spin at same speed for encoder of motor one
 int encoder0PinA = A1; //J3 motor on board
 //int encoder0PinB = 4;
-int encoder0Pos = 0;
+int encoder0Pos = 0; //Motor's angular position read by the encoder
 int encoder0PinALast = LOW;
 
+//for encoder for motor two
 int encoder1PinA = A2; //J4 motor on board
 //int encoder1PinB = 8;
 int encoder1Pos = 0;
 int encoder1PinALast = LOW;
 
 int encoderCountpRev = 360;
+//setpoint is turn rate to compare to/reach
 int setpoint = 120; //(degrees/sec) 
-double Integral0 = 0;
-double Integral1 = 0;
+double Integral0 = 0; //accumulated error with motors from desired number of turns
+double Integral1 = 0; //accumulated error with motors from desired number of turns
 int n = LOW;
 int m = LOW;
 
+//for driver for IN1 and IN2 for motor one
 int motor0pin1 = 2; // J3 on Board //right motors  *******************SWITCH MOTORS IN HARDWARE
 int motor0pin2 = 3; //pwm pin
 int pwm0 = 80; //123
 int digital0 = 1; //0?
 
+//for driver for IN1 and IN2 for motor two
 int motor1pin1 = 8; // J4 on Board //left motors
-int motor1pin2 = 5; //pwm pin
+int motor1pin2 = 5; //pwm (controls voltage signal) pin
 int pwm1 = 80; //123
 int digital1 = 1; //0?
 
@@ -60,9 +65,12 @@ int encoder1PrevCount = 0;
 int lastSpeed1 = 0;
 
 double timeSec = .5;
-
+//PID constants
+//P (proportional) is how much to adjust when turn rate is not equal to set rate. Matters most.
 double kP = 0.25;//0.20 or .15
+//I (integral) is how much to adjust based on accumulated error
 double kI = 0.2;//0.01 or .05
+//D (derivative) how quickly it deviates from set rate. Adjusts quicker for greater rates
 double kD = 0.211;//0.01 or .01
 
 
@@ -80,9 +88,7 @@ int echoPin = A3; //this is the ADC pin
 long duration,cm;
 
 
-void setup() {
-  // put your setup code here, to run once:
-  
+void setup() {  
 
   pinMode (encoder0PinA, INPUT);
   //  pinMode (encoder0PinB, INPUT);
@@ -131,9 +137,13 @@ void setup() {
 
 ISR (SPI_STC_vect) { //SPI Interrupt Service Routine
  // digitalWrite(3,1);
-  //Serial.println("work");
+  Serial.println("entered ISR");
+  if (SPDR != c)
+    Serial.println("Value has been changed");
   byte c = SPDR; //read byte from SPI data register
   updated = c;// save data in the next index in the array buff
+  Serial.print("ISR Value: ");
+  Serial.println(updated);
  // if (c == '\r') //check for the end of the word
   process = true;
   
